@@ -26,14 +26,14 @@
                 <strong>Status:</strong>
                 {{status}}
               </div>
-              <button @click="episodeList">Episodes</button>
+              <button @click="episodeList(episode)">Episodes</button>
             </div>
             <transition>
-              <div v-if="episodeVisible" style>
-                <div v-for="episodeTitle in episode" :key="episodeTitle">
-                  <ul style="">
-                    <li>
-                      <a :href="episodeTitle" target="_blank">{{episodeTitle}}</a>
+              <div class="episodesList" style="" v-if="episodeVisible">
+                <div v-for="episodeTitle in allEpisodes" :key="episodeTitle.id">
+                  <ul>
+                    <li style="padding:0px;">
+                      <a style="margin:5px;" :href="episodeTitle.episodeUrl" target="_blank" >{{episodeTitle.episodeTitle}}</a>
                     </li>
                   </ul>
                 </div>
@@ -60,13 +60,31 @@ export default {
   emits: ["close"],
   data() {
     return {
-      episodeVisible: false
+      episodeVisible: false,
+      allEpisodes:[]
     };
   },
   methods: {
-    episodeList() {
+    episodeList(item) {
       this.episodeVisible = !this.episodeVisible;
+      this.allEpisodes =[];
+      this.getEpisode(item);
+    },
+    getEpisode(list){
+      let newEpisode={};
+      for (newEpisode of list){
+      let number = newEpisode.split("/", 6).pop();
+      console.log(number);
+      this.allEpisodes.push({
+          id:Date.now(),
+          episodeUrl: newEpisode,
+          episodeTitle: 'Episode '+ number
+        });
+      }
+     
+      
     }
+    
   }
 };
 </script>
@@ -114,6 +132,9 @@ dialog {
   background-color: white;
   z-index: 100;
   border: none;
+}
+.episodesList{
+  display:flex; flex-wrap:wrap; 
 }
 ul {
   list-style-type: none;
